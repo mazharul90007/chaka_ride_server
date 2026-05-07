@@ -22,6 +22,16 @@ export class AdminController {
     return this.adminService.getAllDrivers();
   }
 
+  @Get('passengers')
+  async getAllPassengers() {
+    return this.adminService.getAllPassengers();
+  }
+
+  @Get('admins')
+  async getAllAdmins() {
+    return this.adminService.getAllAdmins();
+  }
+
   @Patch('driver/:id/status')
   async updateDriverStatus(
     @Param('id') driverId: string,

@@ -29,6 +29,37 @@ export class AdminService {
             name: true,
             email: true,
             image: true,
+            emailVerified: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getAllPassengers() {
+    return this.prisma.passenger.findMany({
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            image: true,
+            emailVerified: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getAllAdmins() {
+    return this.prisma.admin.findMany({
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            image: true,
+            emailVerified: true,
           },
         },
       },

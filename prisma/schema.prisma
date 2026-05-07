@@ -12,12 +12,98 @@ model User {
   email         String    @unique
   emailVerified Boolean   @default(false)
   image         String?
+  role          UserRole  @default(PASSENGER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  
+  // Roles
+  passenger     Passenger?
+  driver        Driver?
+  admin         Admin?
+  
+  // Relations
+  journeys      Journey[]   @relation("UserJourneys")
+  bids          Bid[]
+  
   sessions      Session[]
   accounts      Account[]
 
   @@map("user")
+}
+
+model Passenger {
+  id        String  @id @default(uuid())
+  phone     String?
+  address   String?
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("passenger")
+}
+
+model Driver {
+  id             String  @id @default(uuid())
+  phone          String?
+  licenseNumber  String?
+  vehicleType    String?
+  vehicleModel   String?
+  vehicleNumber  String?
+  userId         String  @unique
+  status         UserStatus @default(PENDING)
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("driver")
+}
+
+model Admin {
+  id        String  @id @default(uuid())
+  phone     String?
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin")
+}
+
+model Journey {
+  id              String        @id @default(uuid())
+  pickupLocation  String
+  destination     String
+  tripType        TripType      @default(ONE_WAY)
+  pickupDate      DateTime
+  pickupTime      String
+  fare            Float?
+  isNegotiable    Boolean       @default(false)
+  otherDetails    String?
+  status          JourneyStatus @default(PENDING)
+  
+  userId          String
+  user            User          @relation("UserJourneys", fields: [userId], references: [id])
+  
+  bids            Bid[]
+  selectedBidId   String?       @unique
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("journey")
+}
+
+model Bid {
+  id          String    @id @default(uuid())
+  bidAmount   Float
+  message     String?
+  status      BidStatus @default(PENDING)
+  
+  journeyId   String
+  journey     Journey   @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  
+  driverId    String
+  driver      User      @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("bid")
 }
 
 model Session {
@@ -62,4 +148,36 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@map("verification")
+}
+
+enum UserRole {
+  PASSENGER
+  DRIVER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum TripType {
+  ONE_WAY
+  ROUND_TRIP
+}
+
+enum JourneyStatus {
+  PENDING
+  ACCEPTED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
 }

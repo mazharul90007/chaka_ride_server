@@ -10,24 +10,27 @@ export class AuthController {
     const protocol = req.protocol;
     const host = req.get('host');
     const url = `${protocol}://${host}${req.originalUrl}`;
-    
+
     const webReq = new Request(url, {
       method: req.method,
       headers: req.headers as any,
       // Note: In a real production app, you'd want to handle the body more robustly (e.g. raw body)
-      body: req.method !== 'GET' && req.method !== 'HEAD' ? JSON.stringify(req.body) : undefined,
+      body:
+        req.method !== 'GET' && req.method !== 'HEAD'
+          ? JSON.stringify(req.body)
+          : undefined,
     });
 
     const betterAuthRes = await auth.handler(webReq);
-    
+
     // Set status
     res.status(betterAuthRes.status);
-    
+
     // Set headers
     betterAuthRes.headers.forEach((value, key) => {
       res.setHeader(key, value);
     });
-    
+
     // Set body
     const contentType = betterAuthRes.headers.get('content-type');
     if (contentType?.includes('application/json')) {

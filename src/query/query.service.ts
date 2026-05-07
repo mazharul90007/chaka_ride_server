@@ -4,7 +4,7 @@ import { QueryStatus } from '@prisma/client';
 import { MailService } from '../mail/mail.service';
 
 @Injectable()
-export class ViewerService {
+export class QueryService {
   constructor(
     private prisma: PrismaService,
     private mailService: MailService,
@@ -25,7 +25,14 @@ export class ViewerService {
         userId: data.userId || null,
       },
       include: {
-        carCategory: true,
+        carCategory: {
+          select: {
+            id: true,
+            categoryName: true,
+            categoryNameBn: true,
+            categoryIcon: true
+          }
+        },
       },
     });
 
@@ -38,7 +45,14 @@ export class ViewerService {
   async getAllQueries() {
     return this.prisma.query.findMany({
       include: {
-        carCategory: true,
+        carCategory: {
+          select: {
+            id: true,
+            categoryName: true,
+            categoryNameBn: true,
+            categoryIcon: true
+          }
+        }
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -51,7 +65,14 @@ export class ViewerService {
         user: {
           select: { name: true, image: true },
         },
-        carCategory: true,
+        carCategory: {
+          select: {
+            id: true,
+            categoryName: true,
+            categoryNameBn: true,
+            categoryIcon: true
+          }
+        }
       },
     });
   }

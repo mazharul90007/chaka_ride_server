@@ -65,4 +65,21 @@ export class AdminService {
       },
     });
   }
+
+  async getStats() {
+    const [totalDrivers, totalPassengers, totalCarCategories, pendingDrivers] =
+      await Promise.all([
+        this.prisma.driver.count(),
+        this.prisma.passenger.count(),
+        this.prisma.carCategory.count(),
+        this.prisma.driver.count({ where: { status: 'PENDING' } }),
+      ]);
+
+    return {
+      totalDrivers,
+      totalPassengers,
+      totalCars: totalCarCategories, // Mapping categories to cars for the UI
+      pendingDrivers,
+    };
+  }
 }

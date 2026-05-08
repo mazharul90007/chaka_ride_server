@@ -17,6 +17,11 @@ import { UserRole, UserStatus } from '@prisma/client';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @Get('stats')
+  async getStats() {
+    return this.adminService.getStats();
+  }
+
   @Get('drivers')
   async getAllDrivers() {
     return this.adminService.getAllDrivers();

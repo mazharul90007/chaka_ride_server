@@ -1,0 +1,23 @@
+model CarCategory {
+  id             String   @id @default(uuid())
+  categoryName   String
+  categoryNameBn String?
+  description    String
+  descriptionBn  String?
+  seat           String
+  seatBn         String?
+  luggage        String
+  luggageBn      String?
+  ac             String
+  acBn           String?
+  fuel           String
+  fuelBn         String?
+  features       Json // Array of { featureTitle, featureTitleBn, featureDescription, featureDescriptionBn, featureIcon }
+  categoryIcon   String?
+  photos         String[]
+  queries        Query[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("car_category")
+}

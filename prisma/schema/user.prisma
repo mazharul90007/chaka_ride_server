@@ -1,0 +1,45 @@
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  dob           DateTime?
+  gender        Gender?
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  role          UserRole @default(PASSENGER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Roles
+  passenger Passenger?
+  driver    Driver?
+  admin     Admin?
+
+  // Relations
+  queries Query[] @relation("UserQueries")
+
+  sessions Session[]
+  accounts Account[]
+
+  @@map("user")
+}
+
+enum UserRole {
+  PASSENGER
+  DRIVER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+

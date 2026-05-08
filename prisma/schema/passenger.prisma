@@ -1,0 +1,9 @@
+model Passenger {
+  id      String  @id @default(uuid())
+  phone   String?
+  address String?
+  userId  String  @unique
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("passenger")
+}

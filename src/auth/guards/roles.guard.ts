@@ -19,10 +19,6 @@ export class RolesGuard implements CanActivate {
       [context.getHandler(), context.getClass()],
     );
 
-    if (!requiredRoles) {
-      return true;
-    }
-
     const request = context.switchToHttp().getRequest();
 
     // Get session from Better Auth
@@ -42,10 +38,12 @@ export class RolesGuard implements CanActivate {
     }
 
     // Check if the user's role (string) is in the required roles list
-    if (!requiredRoles.includes(user.role as string)) {
-      throw new ForbiddenException(
-        'Forbidden! You do not have permission to access this resource',
-      );
+    if (requiredRoles && requiredRoles.length > 0) {
+      if (!requiredRoles.includes(user.role as string)) {
+        throw new ForbiddenException(
+          'Forbidden! You do not have permission to access this resource',
+        );
+      }
     }
 
     // Attach user to request for further use

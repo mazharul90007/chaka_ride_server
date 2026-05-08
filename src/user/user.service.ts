@@ -1,19 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cloudinary: CloudinaryService,
+  ) {}
 
-  async updateProfile(userId: string, role: string, data: any) {
+  async updateProfile(userId: string, role: string, dataString?: string, file?: Express.Multer.File) {
+    let data: any = {};
+    if (dataString) {
+      try {
+        data = JSON.parse(dataString);
+      } catch (e) {
+        throw new BadRequestException('Invalid JSON format in data field');
+      }
+    }
+
     // Separate base user fields from role-specific fields
-    const { name, dob, gender, image, ...roleData } = data;
+    const { name, dob, gender, ...roleData } = data;
 
     const baseUserData: any = {};
     if (name !== undefined) baseUserData.name = name;
     if (dob !== undefined) baseUserData.dob = new Date(dob);
     if (gender !== undefined) baseUserData.gender = gender;
-    if (image !== undefined) baseUserData.image = image;
+
+    // Handle Image Upload
+    if (file) {
+      const existingUser = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { image: true },
+      });
+
+      if (existingUser?.image) {
+        const publicId = this.cloudinary.extractPublicIdFromUrl(existingUser.image);
+        if (publicId) {
+          await this.cloudinary.deleteImage(publicId).catch(console.error);
+        }
+      }
+
+      const uploadResult = await this.cloudinary.uploadImage(file);
+      baseUserData.image = uploadResult.secure_url;
+    }
 
     // Security: Prevent updating sensitive fields
     delete roleData.id;

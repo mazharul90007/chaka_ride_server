@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Patch, Body, UseGuards, Req, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
@@ -12,8 +13,13 @@ export class UserController {
     return this.userService.getProfile(req.user.id);
   }
 
-  @Post('profile')
-  async updateProfile(@Req() req: any, @Body() data: any) {
-    return this.userService.updateProfile(req.user.id, req.user.role, data);
+  @Patch('profile')
+  @UseInterceptors(FileInterceptor('image'))
+  async updateProfile(
+    @Req() req: any,
+    @Body() body: { data?: string },
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.userService.updateProfile(req.user.id, req.user.role, body.data, file);
   }
 }

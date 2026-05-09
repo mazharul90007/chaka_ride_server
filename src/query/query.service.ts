@@ -83,4 +83,14 @@ export class QueryService {
       data: { status },
     });
   }
+
+  async bulkDeleteQueries(ids: string[]) {
+    return this.prisma.query.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
 }

@@ -7,7 +7,7 @@ export class UserService {
   constructor(
     private prisma: PrismaService,
     private cloudinary: CloudinaryService,
-  ) {}
+  ) { }
 
   async updateProfile(userId: string, role: string, dataString?: string, file?: Express.Multer.File) {
     let data: any = {};
@@ -71,16 +71,19 @@ export class UserService {
             update: roleData,
           });
         } else if (role === 'DRIVER') {
+          // Remove fields that don't exist in Driver model
+          const { address, ...driverData } = roleData;
           await tx.driver.upsert({
             where: { userId },
-            create: { ...roleData, userId },
-            update: roleData,
+            create: { ...driverData, userId },
+            update: driverData,
           });
         } else if (role === 'ADMIN') {
+          const { address, ...adminData } = roleData;
           await tx.admin.upsert({
             where: { userId },
-            create: { ...roleData, userId },
-            update: roleData,
+            create: { ...adminData, userId },
+            update: adminData,
           });
         }
       }
@@ -88,7 +91,15 @@ export class UserService {
       // Return the updated profile with nested relations
       return tx.user.findUnique({
         where: { id: userId },
-        include: { passenger: true, driver: true, admin: true },
+        include: {
+          passenger: true,
+          driver: {
+            include: {
+              vehicleCategory: true
+            }
+          },
+          admin: true
+        },
       });
     });
   }
@@ -96,9 +107,13 @@ export class UserService {
   async getProfile(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
-      include: { 
+      include: {
         passenger: true,
-        driver: true,
+        driver: {
+          include: {
+            vehicleCategory: true
+          }
+        },
         admin: true,
       },
     });

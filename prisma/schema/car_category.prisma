@@ -18,6 +18,7 @@ model CarCategory {
   queries        Query[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  drivers        Driver[]
 
   @@map("car_category")
 }

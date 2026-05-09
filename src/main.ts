@@ -12,19 +12,22 @@ async function createNestExpressApp(): Promise<express.Express> {
   const expressApp = express();
   const adapter = new ExpressAdapter(expressApp);
   const app = await NestFactory.create(AppModule, adapter);
-  
+
   app.setGlobalPrefix('api/v1', {
     exclude: ['/'],
   });
-  
+
   const reflector = app.get(Reflector);
   app.useGlobalInterceptors(new ResponseInterceptor(reflector));
-  
+
   app.enableCors({
-    origin: ['http://localhost:3000'], // Add your production frontend URL here later
+    origin: [
+      'http://localhost:3000',
+      'https://chaka-ride.vercel.app'
+    ],
     credentials: true,
   });
-  
+
   await app.init();
   return expressApp;
 }

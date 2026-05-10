@@ -1,98 +1,159 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="#" target="blank"><img src="https://res.cloudinary.com/dp6urj3gj/image/upload/v1731674488/car_logo_tst97o.png" width="160" alt="Chaka Ride Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<p align="center">A professional and scalable ride-sharing platform backend with role-based access, trip management, and AI-powered smart estimates.</p>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# CHAKA RIDE SERVER
 
-## Description
+**CHAKA RIDE SERVER** is a full-featured backend API for a modern ride-sharing and car rental platform. It supports passenger and driver onboarding, trip requesting and bidding flows, admin moderation, and AI-powered recommendations.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## 🚀 Features
+
+### Role Based Authorization
+
+[PASSENGER, DRIVER, ADMIN, SUPER_ADMIN]
+
+### Authentication and Account Security
+
+- **Better-Auth integration** with session management.
+- **Role and status aware access control** for secure routing.
+
+### Trip Management
+
+- **Create Trip Request** (PASSENGER, ADMIN)
+- **Driver Bidding System** (DRIVER)
+- **Approve/Reject Bids** (ADMIN)
+- **Trip Status Workflow** (PENDING, ASSIGNED, COMPLETED, CANCELLED)
+- Support for One-Way, Round-Trip, and various car categories.
+
+### Profile Management
+
+- **Passenger Profile** and preferences.
+- **Driver Profile** with vehicle registration and license verification.
+- **Admin Profile** for operational control.
+
+### AI Features
+
+- **Smart Trip Assistant:** AI-powered vehicle recommendations based on passenger requirements (distance, passengers, luggage).
+- **Smart Bidding/Price Estimation:** AI-generated fair market price estimates for drivers bidding on trips, analyzing distance, route, and car category.
+
+### Admin Control Panel APIs
+
+- Manage passengers, drivers, and admin profiles.
+- Manage vehicle categories.
+- Track platform revenue and driver earnings.
+- Manage passenger support queries.
+
+---
+
+## 🛠 Technology Stack
+
+### Backend Framework
+
+- **Node.js** - Runtime environment
+- **NestJS** - Web framework
+- **TypeScript** - Type-safe JavaScript development
+
+### Database and ORM
+
+- **PostgreSQL**
+- **Prisma** - Next-generation ORM
+
+### Authentication and Security
+
+- **Better-Auth** - Session and identity handling
+- **Role Guards** for protected APIs
+
+### AI Integration
+
+- **OpenRouter (OpenAI Models)** for intelligent recommendations and pricing.
+
+---
+
+## 📋 Prerequisites
+
+Before setup, ensure you have:
+
+- **Node.js** (v18+ recommended)
+- **pnpm** (or npm)
+- **PostgreSQL** database
+- **Git**
+
+---
+
+## 🔧 Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
-$ pnpm install
+git clone https://github.com/mazharul90007/chaka_ride.git
+cd chaka_ride/chaka_ride_server
 ```
 
-## Compile and run the project
+### 2. Install Dependencies
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm install
 ```
 
-## Run tests
+### 3. Environment Configuration
+
+Create `.env` at the project root and set:
+
+```env
+PORT=4000
+DATABASE_URL="postgresql://user:password@localhost:5432/chakaride"
+
+BETTER_AUTH_SECRET="your_better_auth_secret"
+BETTER_AUTH_URL="http://localhost:4000"
+APP_URL="http://localhost:3000"
+
+OPENROUTER_API_KEY="your_openrouter_api_key"
+OPENROUTER_LLM_MODEL="openai/gpt-3.5-turbo"
+```
+
+### 4. Database Setup
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+npx prisma generate
+npx prisma db push
 ```
 
-## Deployment
+### 5. Run the Server
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Development:
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+pnpm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Build:
 
-## Resources
+```bash
+pnpm run build
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Server default URL: `http://localhost:4000`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## 🎯 Usage Notes
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- Base REST prefix: `/api/v1`
+- Better-Auth base prefix: `/api/v1/auth/*`
+- Most protected endpoints require authentication cookie/session plus role checks.
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 👤 Author
 
-## License
+Mazharul Islam Sourabh
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## 📝 License
+
+ISC

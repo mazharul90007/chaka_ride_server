@@ -1,15 +1,15 @@
 model Driver {
-  id            String     @id @default(uuid())
-  phone         String?
-  licenseNumber String?
-  vehicleCategoryId String?
-  vehicleCategory   CarCategory? @relation(fields: [vehicleCategoryId], references: [id])
+  id                String       @id @default(uuid())
+  phone             String?
+  licenseNumber     String?
   vehicleModel      String?
   vehicleNumber     String?
-  userId            String      @unique
-  status            UserStatus  @default(PENDING)
-  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String       @unique
+  status            UserStatus   @default(PENDING)
+  vehicleCategoryId String?
   cars              Car[]
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleCategory   CarCategory? @relation(fields: [vehicleCategoryId], references: [id])
 
   @@map("driver")
 }

@@ -1,22 +1,20 @@
 model Query {
   id             String      @id @default(uuid())
   fullName       String
-  email          String
   whatsAppNumber String
   pickupLocation String
   destination    String
-  carCategoryId  String
-  carCategory    CarCategory @relation(fields: [carCategoryId], references: [id])
   tripType       TripType    @default(ONE_WAY)
   pickupDate     String
   pickupTime     String
   status         QueryStatus @default(PENDING)
-
-  userId String?
-  user   User?   @relation("UserQueries", fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId         String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  email          String
+  carCategoryId  String
+  carCategory    CarCategory @relation(fields: [carCategoryId], references: [id])
+  user           User?       @relation("UserQueries", fields: [userId], references: [id])
 
   @@map("query")
 }

@@ -1,25 +1,25 @@
 model CarCategory {
   id             String   @id @default(uuid())
   categoryName   String
-  categoryNameBn String?
   description    String
-  descriptionBn  String?
   seat           String
-  seatBn         String?
   luggage        String
-  luggageBn      String?
   ac             String
-  acBn           String?
   fuel           String
-  fuelBn         String?
-  features       Json // Array of { featureTitle, featureTitleBn, featureDescription, featureDescriptionBn, featureIcon }
+  features       Json
   categoryIcon   String?
   photos         String[]
-  queries        Query[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  drivers        Driver[]
+  acBn           String?
+  categoryNameBn String?
+  descriptionBn  String?
+  fuelBn         String?
+  luggageBn      String?
+  seatBn         String?
   cars           Car[]
+  drivers        Driver[]
+  queries        Query[]
 
   @@map("car_category")
 }

@@ -12,6 +12,7 @@ import { MailModule } from './mail/mail.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CarModule } from './car/car.module';
 import { UploadModule } from './upload/upload.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UploadModule } from './upload/upload.module';
     CloudinaryModule,
     CarModule,
     UploadModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

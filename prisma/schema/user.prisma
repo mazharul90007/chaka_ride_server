@@ -1,25 +1,20 @@
 model User {
-  id            String   @id @default(uuid())
+  id            String     @id @default(uuid())
   name          String
+  email         String     @unique
+  emailVerified Boolean    @default(false)
+  image         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  role          UserRole   @default(PASSENGER)
   dob           DateTime?
   gender        Gender?
-  email         String   @unique
-  emailVerified Boolean  @default(false)
-  image         String?
-  role          UserRole @default(PASSENGER)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // Roles
-  passenger Passenger?
-  driver    Driver?
-  admin     Admin?
-
-  // Relations
-  queries Query[] @relation("UserQueries")
-
-  sessions Session[]
-  accounts Account[]
+  accounts      Account[]
+  admin         Admin?
+  driver        Driver?
+  passenger     Passenger?
+  queries       Query[]    @relation("UserQueries")
+  sessions      Session[]
 
   @@map("user")
 }
@@ -42,4 +37,3 @@ enum Gender {
   FEMALE
   OTHER
 }
-

@@ -1,0 +1,33 @@
+model Car {
+  id                 String      @id @default(uuid())
+  model              String
+  modelBn            String?
+  year               String
+  yearBn             String?
+  description        String?
+  descriptionBn      String?
+  registrationNumber String      @unique
+  engineNumber       String?
+  chassisNumber      String?
+  color              String
+  colorBn            String?
+  photos             String[]
+  status             CarStatus   @default(PENDING)
+  
+  driverId           String
+  driver             Driver      @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  
+  categoryId         String
+  category           CarCategory @relation(fields: [categoryId], references: [id])
+
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@map("car")
+}
+
+enum CarStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

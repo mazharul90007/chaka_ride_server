@@ -9,6 +9,7 @@ model Driver {
   userId            String      @unique
   status            UserStatus  @default(PENDING)
   user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cars              Car[]
 
   @@map("driver")
 }

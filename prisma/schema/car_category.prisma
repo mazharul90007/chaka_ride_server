@@ -19,6 +19,7 @@ model CarCategory {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   drivers        Driver[]
+  cars           Car[]
 
   @@map("car_category")
 }

@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Delete,
+  Request,
 } from '@nestjs/common';
 import { QueryService } from './query.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -22,6 +23,13 @@ export class QueryController {
   @ResponseMessage('Query created successfully')
   async createQuery(@Body() data: any) {
     return this.queryService.createQuery(data);
+  }
+  @Get('my-queries')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.PASSENGER)
+  @ResponseMessage('Passenger queries fetched successfully')
+  async getMyQueries(@Request() req) {
+    return this.queryService.getPassengerQueries(req.user.id);
   }
 
   @Get('all')

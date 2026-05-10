@@ -10,6 +10,8 @@ model Driver {
   cars              Car[]
   user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   vehicleCategory   CarCategory? @relation(fields: [vehicleCategoryId], references: [id])
+  finalTrips        Trip[]       @relation("FinalDriverTrips")
+  tripRequests      TripRequest[]
 
   @@map("driver")
 }

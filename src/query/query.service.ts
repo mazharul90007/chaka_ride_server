@@ -42,6 +42,23 @@ export class QueryService {
     return query;
   }
 
+  async getPassengerQueries(userId: string) {
+    return this.prisma.query.findMany({
+      where: { userId },
+      include: {
+        carCategory: {
+          select: {
+            id: true,
+            categoryName: true,
+            categoryNameBn: true,
+            categoryIcon: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async getAllQueries() {
     return this.prisma.query.findMany({
       include: {
@@ -51,6 +68,11 @@ export class QueryService {
             categoryName: true,
             categoryNameBn: true,
             categoryIcon: true
+          }
+        },
+        user: {
+          select: {
+            image: true
           }
         }
       },

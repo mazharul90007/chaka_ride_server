@@ -16,4 +16,13 @@ export class AiController {
     return this.aiService.recommendVehicle(tripDetails);
   }
 
+  @Post('estimate-price')
+  async estimateTripPrice(@Body() tripDetails: {
+    pickup: string;
+    destination: string;
+    carCategoryName: string;
+    tripType: string;
+  }) {
+    return this.aiService.estimateTripPrice(tripDetails);
+  }
 }

@@ -13,6 +13,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CarModule } from './car/car.module';
 import { UploadModule } from './upload/upload.module';
 import { AiModule } from './ai/ai.module';
+import { TripModule } from './trip/trip.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AiModule } from './ai/ai.module';
     CarModule,
     UploadModule,
     AiModule,
+    TripModule,
   ],
   controllers: [AppController],
   providers: [AppService],

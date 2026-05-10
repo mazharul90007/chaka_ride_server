@@ -20,6 +20,7 @@ model CarCategory {
   cars           Car[]
   drivers        Driver[]
   queries        Query[]
+  trips          Trip[]
 
   @@map("car_category")
 }

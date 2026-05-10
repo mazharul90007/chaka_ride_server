@@ -65,21 +65,38 @@ export class UserService {
       // 2. Update role-specific table if there are role fields provided
       if (Object.keys(roleData).length > 0) {
         if (role === 'PASSENGER') {
+          const passengerData: any = {
+            phone: roleData.phone,
+            address: roleData.address,
+          };
+          Object.keys(passengerData).forEach(key => passengerData[key] === undefined && delete passengerData[key]);
+
           await tx.passenger.upsert({
             where: { userId },
-            create: { ...roleData, userId },
-            update: roleData,
+            create: { ...passengerData, userId },
+            update: passengerData,
           });
         } else if (role === 'DRIVER') {
-          // Remove fields that don't exist in Driver model
-          const { address, ...driverData } = roleData;
+          const driverData: any = {
+            phone: roleData.phone,
+            licenseNumber: roleData.licenseNumber,
+            vehicleModel: roleData.vehicleModel,
+            vehicleNumber: roleData.vehicleNumber,
+            vehicleCategoryId: roleData.vehicleCategoryId,
+          };
+          Object.keys(driverData).forEach(key => driverData[key] === undefined && delete driverData[key]);
+
           await tx.driver.upsert({
             where: { userId },
             create: { ...driverData, userId },
             update: driverData,
           });
         } else if (role === 'ADMIN') {
-          const { address, ...adminData } = roleData;
+          const adminData: any = {
+            phone: roleData.phone,
+          };
+          Object.keys(adminData).forEach(key => adminData[key] === undefined && delete adminData[key]);
+
           await tx.admin.upsert({
             where: { userId },
             create: { ...adminData, userId },

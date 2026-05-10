@@ -1,0 +1,61 @@
+model Trip {
+  id             String      @id @default(uuid())
+  fullName       String
+  whatsAppNumber String
+  pickupLocation String
+  destination    String
+  tripType       TripType    @default(ONE_WAY)
+  pickupDate     String
+  pickupTime     String
+  carCategoryId  String
+  email          String?
+  
+  requestedPrice Float?
+  finalPrice     Float?
+  status         TripStatus  @default(PENDING) 
+  
+  passengerId    String?     
+  finalDriverId  String?     
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  
+  passenger      User?       @relation("UserTrips", fields: [passengerId], references: [id])
+  finalDriver    Driver?     @relation("FinalDriverTrips", fields: [finalDriverId], references: [id])
+  carCategory    CarCategory @relation(fields: [carCategoryId], references: [id])
+  
+  driverRequests TripRequest[]
+
+  @@map("trip")
+}
+
+model TripRequest {
+  id           String             @id @default(uuid())
+  tripId       String
+  driverId     String
+  status       TripRequestStatus  @default(PENDING) 
+  offeredPrice Float?
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  trip         Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  driver       Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@map("trip_request")
+}
+
+enum TripStatus {
+  PENDING
+  ASSIGNED
+  COMPLETED
+  CANCELLED
+}
+
+enum TripRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  APPROVED
+  CANCELLED
+}

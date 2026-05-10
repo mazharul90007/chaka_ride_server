@@ -91,4 +91,61 @@ export class AiService {
       };
     }
   }
+
+  async estimateTripPrice(tripDetails: {
+    pickup: string;
+    destination: string;
+    carCategoryName: string;
+    tripType: string;
+  }) {
+    const prompt = `
+      You are Chaka Ride's expert financial analyst for ride-sharing and car rentals in Bangladesh.
+      Based on the following trip details, provide a fair market price estimate for the driver to bid.
+      
+      Trip Details:
+      - Pickup Location: ${tripDetails.pickup}
+      - Destination: ${tripDetails.destination}
+      - Car Category: ${tripDetails.carCategoryName}
+      - Trip Type: ${tripDetails.tripType}
+
+      Guidelines:
+      1. Prices must be in BDT (৳).
+      2. Factor in typical distances between these locations in Bangladesh, tolls, and fuel costs.
+      3. Factor in the car category (e.g., Premium cars cost more than Economy).
+      4. If it is a ROUND_TRIP, the price should be roughly double a ONE_WAY trip, plus waiting time.
+      5. Provide a realistic number. Do not say "it depends". Give your best professional estimate.
+
+      Response Format:
+      Provide a helpful, friendly response in JSON format exactly like this:
+      {
+        "estimatedPrice": 5500,
+        "reasoning": "A brief 1-2 sentence explanation of how you calculated this (e.g., 'The distance from Dhaka to Sylhet is approx 240km. For a premium sedan, 5500 BDT covers fuel and standard market rates.')"
+      }
+    `;
+
+    const response = await this.openai.chat.completions.create({
+      model: this.configService.get<string>('OPENROUTER_LLM_MODEL') || 'openai/gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: 'You are an expert financial pricing assistant for a ride-sharing app in Bangladesh. Always respond in valid JSON matching the requested schema.' },
+        { role: 'user', content: prompt }
+      ],
+    });
+
+    let content = response.choices[0].message.content ?? '';
+    
+    // Clean up markdown code blocks if present
+    if (content.includes('```')) {
+      content = content.replace(/```json|```/g, '').trim();
+    }
+
+    try {
+      return JSON.parse(content);
+    } catch (e) {
+      console.error('Failed to parse AI JSON:', e);
+      return {
+        error: "Failed to parse AI response",
+        raw: content
+      };
+    }
+  }
 }

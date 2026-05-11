@@ -24,7 +24,8 @@ export const auth = betterAuth({
     'http://localhost:3000', 
     'https://chaka-ride.vercel.app',
     'https://chaka-ride-client.vercel.app',
-    'https://chaka-ride-server.vercel.app'
+    'https://chaka-ride-server.vercel.app',
+    'https://chaka-ride-server.onrender.com'
   ],
   socialProviders: {
     google: {

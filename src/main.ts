@@ -10,6 +10,7 @@ export const maxDuration = 60;
 
 async function createNestExpressApp(): Promise<express.Express> {
   const expressApp = express();
+  expressApp.set('trust proxy', 1);
   const adapter = new ExpressAdapter(expressApp);
   const app = await NestFactory.create(AppModule, adapter);
 

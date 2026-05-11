@@ -1,5 +1,8 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { AiService } from './ai.service';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @Controller('ai')
 export class AiController {
@@ -24,5 +27,19 @@ export class AiController {
     tripType: string;
   }) {
     return this.aiService.estimateTripPrice(tripDetails);
+  }
+
+  @Post('suggest-drivers')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @UseGuards(RolesGuard)
+  async suggestDrivers(@Body() body: any) {
+    return this.aiService.suggestDrivers(body);
+  }
+
+  @Get('morning-briefing')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @UseGuards(RolesGuard)
+  async getMorningBriefing() {
+    return this.aiService.getMorningBriefing();
   }
 }

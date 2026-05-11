@@ -209,6 +209,8 @@ This includes built-in auth routes (for example sign-in, sign-up, sign-out, sess
 
 - `POST /recommend` - Recommend a vehicle based on trip details (PUBLIC)
 - `POST /estimate-price` - Generate a smart price estimate for a bid (DRIVER)
+- `POST /suggest-drivers` - AI-powered driver matching based on trip requirements (ADMIN)
+- `GET /morning-briefing` - Automated platform health summary and insights (ADMIN)
 
 ---
 
@@ -218,6 +220,8 @@ Chaka Ride leverages AI to provide a smarter booking and operational experience:
 
 - **Smart Trip Assistant**: AI-powered natural language logic to recommend the perfect vehicle based on passenger count, luggage, and destination.
 - **Smart Bidding System**: Instant AI price calculations to help drivers formulate competitive bids based on market rates and distance.
+- **AI Dispatcher**: Intelligent driver-matching for admins, ranking the top 5 most suitable drivers for any given trip based on vehicle category and route.
+- **AI Platform Briefing**: Automated "Morning Briefing" for admins, summarizing platform health, pending tasks, and recent activity into human-like insights.
 
 ---
 

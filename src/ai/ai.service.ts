@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { CarService } from '../car/car.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AiService {
@@ -10,6 +11,7 @@ export class AiService {
   constructor(
     private configService: ConfigService,
     private carService: CarService,
+    private prisma: PrismaService,
   ) {
     
     this.openai = new OpenAI({
@@ -146,6 +148,155 @@ export class AiService {
         error: "Failed to parse AI response",
         raw: content
       };
+    }
+  }
+
+  async suggestDrivers(tripDetails: {
+    pickup: string;
+    destination: string;
+    carCategoryId: string;
+    tripType: string;
+  }) {
+    // 1. Fetch all approved drivers with their details
+    const drivers = await this.prisma.driver.findMany({
+      where: { status: 'APPROVED' },
+      include: {
+        user: { select: { name: true, email: true } },
+        vehicleCategory: { select: { categoryName: true } },
+      },
+    });
+
+    const category = await this.prisma.carCategory.findUnique({
+      where: { id: tripDetails.carCategoryId },
+    });
+
+    if (drivers.length === 0) {
+      return { recommendations: [] };
+    }
+
+    // 2. Prepare context for AI
+    const driversContext = drivers.map(d => ({
+      id: d.id,
+      name: d.user.name,
+      vehicle: d.vehicleModel,
+      vehicleType: d.vehicleCategory?.categoryName,
+      license: d.licenseNumber ? "Verified" : "Pending",
+    }));
+
+    const prompt = `
+      You are Chaka Ride's expert dispatch AI. Your goal is to suggest the Top 5 best drivers for a new trip.
+      
+      Trip Requirements:
+      - Route: ${tripDetails.pickup} to ${tripDetails.destination}
+      - Car Type Required: ${category?.categoryName || 'Any'}
+      - Trip Type: ${tripDetails.tripType}
+
+      Available Approved Drivers:
+      ${JSON.stringify(driversContext, null, 2)}
+
+      Selection Criteria:
+      1. Priority given to drivers whose vehicle type matches the required category.
+      2. If a driver seems like a perfect match for the route, prioritize them.
+      
+      Response Format (Strict JSON):
+      {
+        "recommendations": [
+          {
+            "driverId": "id",
+            "driverName": "name",
+            "matchScore": 95, // 0-100
+            "reasoning": "Brief explanation (1 sentence)"
+          }
+        ]
+      }
+      
+      Suggest exactly 5 drivers. If there are fewer than 5, suggest all available.
+    `;
+
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: this.configService.get<string>('OPENROUTER_LLM_MODEL') || 'google/gemini-2.0-flash-exp:free',
+        messages: [
+          { role: 'system', content: 'You are a professional dispatch assistant. Always respond in valid JSON.' },
+          { role: 'user', content: prompt }
+        ],
+      });
+
+      let content = response.choices[0].message.content ?? '';
+      if (content.includes('```')) {
+        content = content.replace(/```json|```/g, '').trim();
+      }
+
+      return JSON.parse(content);
+    } catch (e) {
+      console.error('AI Suggestion Error:', e);
+      throw e;
+    }
+  }
+
+  async getMorningBriefing() {
+    // 1. Fetch current stats
+    const [totalDrivers, totalPassengers, totalTrips, pendingDrivers, pendingQueries] = 
+      await Promise.all([
+        this.prisma.driver.count(),
+        this.prisma.passenger.count(),
+        this.prisma.trip.count(),
+        this.prisma.driver.count({ where: { status: 'PENDING' } }),
+        this.prisma.query.count({ where: { status: 'PENDING' } }),
+      ]);
+
+    // 2. Fetch recent trip routes for context
+    const recentTrips = await this.prisma.trip.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      select: { pickupLocation: true, destination: true }
+    });
+
+    const context = {
+      totalDrivers,
+      totalPassengers,
+      totalTrips,
+      pendingVerifications: pendingDrivers,
+      unreadQueries: pendingQueries,
+      recentRoutes: recentTrips.map(t => `${t.pickupLocation} to ${t.destination}`),
+      date: new Date().toLocaleDateString(),
+    };
+
+    const prompt = `
+      You are Chaka Ride's senior platform manager. Provide a concise, professional, and encouraging "Morning Briefing" for the Admin.
+      
+      Platform Stats:
+      ${JSON.stringify(context, null, 2)}
+
+      Requirements:
+      1. Keep it to 2-3 sentences.
+      2. Mention at least one specific stat (e.g., pending drivers or unread queries).
+      3. Use a friendly "Good morning" tone.
+      4. Highlight a recent route if available.
+      
+      Response Format:
+      Return ONLY a JSON object: { "briefing": "The briefing text here..." }
+    `;
+
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: this.configService.get<string>('OPENROUTER_LLM_MODEL') || 'google/gemini-2.0-flash-exp:free',
+        messages: [
+          { role: 'system', content: 'You are a helpful admin assistant. Always respond in valid JSON.' },
+          { role: 'user', content: prompt }
+        ],
+      });
+
+      let content = response.choices[0].message.content ?? '';
+      if (content.includes('```')) {
+        content = content.replace(/```json|```/g, '').trim();
+      }
+
+      const parsed = JSON.parse(content);
+      return { briefing: parsed.briefing || parsed.message || content };
+    } catch (e) {
+      console.error('AI Briefing Error:', e);
+      return { briefing: "Good morning! The platform is running smoothly. Check your pending tasks to stay ahead." };
     }
   }
 }

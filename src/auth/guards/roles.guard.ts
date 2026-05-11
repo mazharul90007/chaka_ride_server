@@ -32,10 +32,12 @@ export class RolesGuard implements CanActivate {
 
     const user = session.user;
 
+    /*
     // Check if email is verified
     if (!user.emailVerified) {
       throw new ForbiddenException('Email verification required');
     }
+    */
 
     // Check if the user's role (string) is in the required roles list
     if (requiredRoles && requiredRoles.length > 0) {

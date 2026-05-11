@@ -1,8 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "regions": ["iad1"],
-  "buildCommand": "pnpm run build:vercel",
+  "regions": [
+    "iad1"
+  ],
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
   "functions": {
     "api/index.js": {
       "memory": 1024,
@@ -11,7 +14,36 @@
     }
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "api/index.js" },
-    { "source": "/(.*)", "destination": "api/index.js" }
+    {
+      "source": "/api/(.*)",
+      "destination": "api/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "api/index.js"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://chaka-ride.vercel.app"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
+        }
+      ]
+    }
   ]
 }

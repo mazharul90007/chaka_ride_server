@@ -23,7 +23,9 @@ async function createNestExpressApp(): Promise<express.Express> {
   app.enableCors({
     origin: [
       'http://localhost:3000',
-      'https://chaka-ride.vercel.app'
+      'https://chaka-ride.vercel.app',
+      'https://chaka-ride.vercel.app/en',
+      'https://chaka-ride.vercel.app/bn',
     ],
     credentials: true,
   });

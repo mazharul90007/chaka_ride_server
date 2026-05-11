@@ -11,13 +11,21 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 export const auth = betterAuth({
+  baseURL: process.env.VERCEL === '1' 
+    ? (process.env.BETTER_AUTH_URL || `https://${process.env.VERCEL_URL}/api/v1/auth`)
+    : (process.env.BETTER_AUTH_URL || 'http://localhost:4000/api/v1/auth'),
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: ['http://localhost:3000', 'https://chaka-ride.vercel.app'],
+  trustedOrigins: [
+    'http://localhost:3000', 
+    'https://chaka-ride.vercel.app',
+    'https://chaka-ride-client.vercel.app',
+    'https://chaka-ride-server.vercel.app'
+  ],
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
